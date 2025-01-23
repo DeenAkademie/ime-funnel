@@ -109,7 +109,7 @@ const MultiStepForm = ({ onClose }) => {
   const onSubmit = async (data) => {
     try {
       const response = await fetch(
-        'https://hooks.zapier.com/hooks/catch/8057500/2kzxxip/',
+        'https://hooks.zapier.com/hooks/catch/8057500/2kpboq3/',
         {
           method: 'POST',
           body: JSON.stringify(data),
