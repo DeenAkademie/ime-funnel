@@ -11,6 +11,6 @@ const ProgressBar = ({ currentStep, totalSteps }) => {
       ))}
     </div>
   );
-};
+}
 
-export default ProgressBar;
+export default ProgressBar; 

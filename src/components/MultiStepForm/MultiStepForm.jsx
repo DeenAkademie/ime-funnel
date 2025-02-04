@@ -4,12 +4,49 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
 import PersonalData from './steps/PersonalData';
-import ContactInfo from './steps/ContactInfo';
 import AddressData from './steps/AddressData';
 import TravelType from './steps/TravelType';
 import Completion from './steps/Completion';
 import ProgressBar from './ProgressBar';
 import PropTypes from 'prop-types';
+
+const personSchema = z.object({
+  firstname: z
+    .string()
+    .min(2, 'Vorname muss mindestens 2 Zeichen lang sein')
+    .nonempty('Vorname ist erforderlich'),
+  lastname: z
+    .string()
+    .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
+    .nonempty('Nachname ist erforderlich'),
+  email: z
+    .string()
+    .email('Ungültige Email-Adresse')
+    .nonempty('Email ist erforderlich'),
+  phone: z
+    .string()
+    .min(6, 'Ungültige Telefonnummer')
+    .nonempty('Telefonnummer ist erforderlich'),
+});
+
+const childSchema = z.object({
+  firstname: z
+    .string()
+    .min(2, 'Vorname muss mindestens 2 Zeichen lang sein')
+    .nonempty('Vorname ist erforderlich'),
+  lastname: z
+    .string()
+    .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
+    .nonempty('Nachname ist erforderlich'),
+  age: z
+    .number()
+    .min(0, 'Alter muss mindestens 0 sein')
+    .max(17, 'Alter muss unter 18 sein')
+    .or(z.string().regex(/^\d+$/).transform(Number))
+    .refine((val) => val >= 0 && val <= 17, {
+      message: 'Alter muss zwischen 0 und 17 Jahren liegen',
+    }),
+});
 
 const formSchema = z.object({
   firstname: z
@@ -20,6 +57,8 @@ const formSchema = z.object({
     .string()
     .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
     .nonempty('Nachname ist erforderlich'),
+  adults: z.array(personSchema).optional(),
+  children: z.array(childSchema).optional(),
   email: z
     .string()
     .email('Ungültige Email-Adresse')
@@ -41,20 +80,20 @@ const formSchema = z.object({
     .min(2, 'Stadt ist erforderlich')
     .nonempty('Stadt ist erforderlich'),
   land: z.string().nonempty('Land ist erforderlich'),
-  reiseart: z.enum(['Umra', 'Hadsch'], {
-    required_error: 'Bitte wählen Sie eine Reiseart',
-  }),
+  reise: z.string().nonempty('Bitte wählen Sie eine Reise'),
+  reiseart: z.string(),
+  reisefuehrer: z.string(),
+  reisezeitraum: z.string(),
   agb: z
     .boolean()
     .refine((val) => val === true, 'AGB müssen akzeptiert werden'),
 });
 
 const stepValidationFields = {
-  0: ['firstname', 'lastname'],
-  1: ['email', 'phone'],
-  2: ['street', 'postcode', 'city', 'land'],
-  3: ['reiseart'],
-  4: ['agb'],
+  0: ['firstname', 'lastname', 'email', 'phone', 'adults', 'children'],
+  1: ['street', 'postcode', 'city', 'land'],
+  2: ['reise'],
+  3: ['agb'],
 };
 
 const MultiStepForm = ({ onClose }) => {
@@ -65,13 +104,18 @@ const MultiStepForm = ({ onClose }) => {
     defaultValues: {
       firstname: '',
       lastname: '',
+      adults: [],
+      children: [],
       email: '',
       phone: '',
       street: '',
       postcode: '',
       city: '',
       land: 'Deutschland',
-      reiseart: 'Umra',
+      reise: '',
+      reiseart: '',
+      reisefuehrer: '',
+      reisezeitraum: '',
       agb: false,
     },
     mode: 'onChange',
@@ -79,7 +123,6 @@ const MultiStepForm = ({ onClose }) => {
 
   const steps = [
     <PersonalData key='personal' form={form} />,
-    <ContactInfo key='contact' form={form} />,
     <AddressData key='address' form={form} />,
     <TravelType key='travel' form={form} />,
     <Completion key='completion' form={form} />,
@@ -109,7 +152,7 @@ const MultiStepForm = ({ onClose }) => {
   const onSubmit = async (data) => {
     try {
       const response = await fetch(
-        'https://hooks.zapier.com/hooks/catch/8057500/2kpboq3/',
+        'https://hooks.zapier.com/hooks/catch/8057500/2aojb2d/',
         {
           method: 'POST',
           body: JSON.stringify(data),
