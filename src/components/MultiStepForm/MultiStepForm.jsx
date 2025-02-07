@@ -10,44 +10,6 @@ import Completion from './steps/Completion';
 import ProgressBar from './ProgressBar';
 import PropTypes from 'prop-types';
 
-const personSchema = z.object({
-  firstname: z
-    .string()
-    .min(2, 'Vorname muss mindestens 2 Zeichen lang sein')
-    .nonempty('Vorname ist erforderlich'),
-  lastname: z
-    .string()
-    .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
-    .nonempty('Nachname ist erforderlich'),
-  email: z
-    .string()
-    .email('Ungültige Email-Adresse')
-    .nonempty('Email ist erforderlich'),
-  phone: z
-    .string()
-    .min(6, 'Ungültige Telefonnummer')
-    .nonempty('Telefonnummer ist erforderlich'),
-});
-
-const childSchema = z.object({
-  firstname: z
-    .string()
-    .min(2, 'Vorname muss mindestens 2 Zeichen lang sein')
-    .nonempty('Vorname ist erforderlich'),
-  lastname: z
-    .string()
-    .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
-    .nonempty('Nachname ist erforderlich'),
-  age: z
-    .number()
-    .min(0, 'Alter muss mindestens 0 sein')
-    .max(17, 'Alter muss unter 18 sein')
-    .or(z.string().regex(/^\d+$/).transform(Number))
-    .refine((val) => val >= 0 && val <= 17, {
-      message: 'Alter muss zwischen 0 und 17 Jahren liegen',
-    }),
-});
-
 const formSchema = z.object({
   firstname: z
     .string()
@@ -57,8 +19,6 @@ const formSchema = z.object({
     .string()
     .min(2, 'Nachname muss mindestens 2 Zeichen lang sein')
     .nonempty('Nachname ist erforderlich'),
-  adults: z.array(personSchema).optional(),
-  children: z.array(childSchema).optional(),
   email: z
     .string()
     .email('Ungültige Email-Adresse')
@@ -67,6 +27,11 @@ const formSchema = z.object({
     .string()
     .min(6, 'Ungültige Telefonnummer')
     .nonempty('Telefonnummer ist erforderlich'),
+  additionalTravelers: z
+    .number()
+    .min(0, 'Minimum ist 0')
+    .max(20, 'Maximum ist 20')
+    .or(z.string().regex(/^\d+$/).transform(Number)),
   street: z
     .string()
     .min(2, 'Straße ist erforderlich')
@@ -90,7 +55,7 @@ const formSchema = z.object({
 });
 
 const stepValidationFields = {
-  0: ['firstname', 'lastname', 'email', 'phone', 'adults', 'children'],
+  0: ['firstname', 'lastname', 'email', 'phone', 'additionalTravelers'],
   1: ['street', 'postcode', 'city', 'land'],
   2: ['reise'],
   3: ['agb'],
@@ -104,10 +69,9 @@ const MultiStepForm = ({ onClose }) => {
     defaultValues: {
       firstname: '',
       lastname: '',
-      adults: [],
-      children: [],
       email: '',
       phone: '',
+      additionalTravelers: 0,
       street: '',
       postcode: '',
       city: '',
@@ -151,11 +115,28 @@ const MultiStepForm = ({ onClose }) => {
 
   const onSubmit = async (data) => {
     try {
+      const submitData = {
+        firstname: data.firstname,
+        lastname: data.lastname,
+        email: data.email,
+        phone: data.phone,
+        additionalTravelers: Number(data.additionalTravelers),
+        street: data.street,
+        postcode: data.postcode,
+        city: data.city,
+        land: data.land,
+        reise: data.reise,
+        reiseart: data.reiseart,
+        reisefuehrer: data.reisefuehrer,
+        reisezeitraum: data.reisezeitraum,
+        agb: data.agb,
+      };
+
       const response = await fetch(
         'https://hooks.zapier.com/hooks/catch/8057500/2aojb2d/',
         {
           method: 'POST',
-          body: JSON.stringify(data),
+          body: JSON.stringify(submitData),
         }
       );
 
@@ -192,7 +173,7 @@ const MultiStepForm = ({ onClose }) => {
           <button
             type='button'
             onClick={nextStep}
-            className='bg-[#8ac240] text-white py-3 px-6 rounded-lg shadow hover:bg-[#73a334] text-lg ml-auto 
+            className='bg-[#C6A866] text-white py-3 px-6 rounded-lg shadow hover:bg-[#B69856] text-lg ml-auto 
                      disabled:opacity-50 disabled:cursor-not-allowed'
             disabled={form.formState.isValidating}
           >
@@ -201,7 +182,7 @@ const MultiStepForm = ({ onClose }) => {
         ) : (
           <button
             type='submit'
-            className='bg-[#8ac240] text-white py-3 px-6 rounded-lg shadow hover:bg-[#73a334] text-lg ml-auto
+            className='bg-[#C6A866] text-white py-3 px-6 rounded-lg shadow hover:bg-[#B69856] text-lg ml-auto
                      disabled:opacity-50 disabled:cursor-not-allowed'
             disabled={!form.formState.isValid || form.formState.isSubmitting}
           >
