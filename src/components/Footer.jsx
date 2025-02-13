@@ -1,4 +1,5 @@
 import { Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -96,6 +97,19 @@ const Footer = () => {
           <p className='text-center text-gray-600'>
             © {new Date().getFullYear()} IME REISEN. Alle Rechte vorbehalten.
           </p>
+        </div>
+
+        {/* Footer Links */}
+        <div className='footer-links flex justify-center gap-4 mt-4'>
+          <Link to='/impressum' className='text-gray-600 hover:text-[#73a334]'>
+            Impressum
+          </Link>
+          <Link
+            to='/datenschutz'
+            className='text-gray-600 hover:text-[#73a334]'
+          >
+            Datenschutz
+          </Link>
         </div>
       </div>
     </footer>
