@@ -1,48 +1,20 @@
 import PropTypes from 'prop-types';
 
 const REISE_OPTIONEN = [
-  {
-    id: 'umra-marcel-03',
-    label: 'UMRA - Marcel Krass 03/25',
-    reiseart: 'Umra',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '03/25',
-  },
-  {
-    id: 'umra-marcel-06',
-    label: 'UMRA - Marcel Krass 06/25',
-    reiseart: 'Umra',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '06/25',
-  },
-  {
-    id: 'umra-marcel-09',
-    label: 'UMRA - Marcel Krass 09/25',
-    reiseart: 'Umra',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '09/25',
-  },
-  {
-    id: 'umra-marcel-12',
-    label: 'UMRA - Marcel Krass 12/25',
-    reiseart: 'Umra',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '12/25',
-  },
-  {
-    id: 'hadsch-marcel-04',
-    label: 'HADSCH - Marcel Krass 04/25',
-    reiseart: 'Hadsch',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '04/25',
-  },
-  {
-    id: 'hadsch-marcel-04',
-    label: 'HADSCH - Marcel Krass 04/25',
-    reiseart: 'Hadsch',
-    reisefuehrer: 'Marcel',
-    reisezeitraum: '04/25',
-  },
+  // {
+  //   id: 'umra-marcel-03',
+  //   label: 'UMRA - Marcel Krass 03/25',
+  //   reiseart: 'Umra',
+  //   reisefuehrer: 'Marcel',
+  //   reisezeitraum: '03/25',
+  // },
+  // {
+  //   id: 'umra-marcel-06',
+  //   label: 'UMRA - Marcel Krass 06/25',
+  //   reiseart: 'Umra',
+  //   reisefuehrer: 'Marcel',
+  //   reisezeitraum: '06/25',
+  // },
 ];
 
 const TravelType = ({ form }) => {
@@ -90,6 +62,16 @@ const TravelType = ({ form }) => {
         </select>
         {errors.reise && (
           <p className='mt-1 text-red-500'>{errors.reise.message}</p>
+        )}
+        {REISE_OPTIONEN.length === 0 && (
+          <div className='mt-4 p-4 bg-[#f8f4eb] rounded-lg border border-[#C6A866]/20'>
+            <p className='text-gray-700'>
+              <span className='font-semibold'>Demnächst verfügbar:</span> Neue
+              Umra- und Hadsch-Reisen für die kommende Saison werden in Kürze
+              hier veröffentlicht. Schauen Sie nochmal vorbei, um keine Angebote
+              zu verpassen.
+            </p>
+          </div>
         )}
       </div>
     </div>
